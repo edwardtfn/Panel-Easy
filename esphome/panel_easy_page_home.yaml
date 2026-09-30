@@ -1,0 +1,18 @@
+#####################################################################################################
+#####                   Panel Easy - https://github.com/edwardtfn/Panel-Easy                    #####
+#####################################################################################################
+##### ESPHOME CORE - PAGE - Home                                                                #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+---
+lvgl:
+  pages:
+    - id: page_home
+      widgets:
+        # Placeholder until the home page renderer is implemented on top of the shared core
+        - label:
+            id: home_placeholder_label
+            align: CENTER
+            text: Panel Easy
+...

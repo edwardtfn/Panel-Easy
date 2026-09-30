@@ -1,0 +1,10 @@
+#####################################################################################################
+#####                   Panel Easy - https://github.com/edwardtfn/Panel-Easy                    #####
+#####################################################################################################
+##### Main entry point - combine with one board package from `boards/`                          #####
+#####################################################################################################
+---
+packages:
+  core: !include esphome/panel_easy_core.yaml
+  page_home: !include esphome/panel_easy_page_home.yaml
+...
