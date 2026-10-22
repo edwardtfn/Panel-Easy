@@ -1,0 +1,60 @@
+---
+name: Build ESPHome
+
+# yamllint disable-line rule:truthy
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build ${{ matrix.config }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - guition_esp32_s3_4848s040
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7.0.0
+        with:
+          python-version: '3.12'
+
+      - name: Install ESPHome
+        run: pip install esphome
+
+      - name: Validate configuration
+        run: esphome config ".test/${{ matrix.config }}.yaml"
+
+      - name: Compile firmware
+        run: esphome compile ".test/${{ matrix.config }}.yaml"
+
+  # ===========================================================================
+  # Gate - required status check for branch protection
+  # ===========================================================================
+  all-checks-passed:
+    name: Build ESPHome / All checks passed
+    runs-on: ubuntu-latest
+    permissions: {}
+    needs: build
+    if: always()
+    steps:
+      - name: Check result
+        run: |
+          echo "build: ${{ needs.build.result }}"
+          case "${{ needs.build.result }}" in
+            success|skipped) exit 0 ;;
+            *) exit 1              ;;
+          esac
+...

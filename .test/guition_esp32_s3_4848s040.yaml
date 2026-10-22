@@ -1,0 +1,11 @@
+# CI test configuration - Guition ESP32-S3-4848S040
+---
+substitutions:
+  device_name: test-guition-4848s040
+  wifi_ssid: test_ssid
+  wifi_password: test_password
+
+packages:
+  board: !include ../boards/guition_esp32_s3_4848s040.yaml
+  panel_easy: !include ../panel_easy.yaml
+...

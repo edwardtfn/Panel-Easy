@@ -1,0 +1,54 @@
+#####################################################################################################
+#####                   Panel Easy - https://github.com/edwardtfn/Panel-Easy                    #####
+#####################################################################################################
+##### ESPHOME CORE - Base                                                                       #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+---
+substitutions:
+  ##############################
+  ## Change only in your      ##
+  ## local yaml substitutions ##
+  ##############################
+  device_name: panel-easy
+  friendly_name: ${device_name}
+  name: ${device_name}
+  ota_password: ""
+  version: dev
+
+api:
+
+button:
+  - id: restart_panel  # Reboot ESP32
+    name: Restart
+    platform: restart
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  comment: Panel Easy
+  min_version: 2026.9.0
+  project:
+    name: edwardtfn.Panel-Easy
+    version: ${version}
+
+logger:
+
+lvgl:
+  # Extended by:
+  #  - page_home
+  id: lvgl_component
+
+ota:
+  - id: ota_std
+    platform: esphome
+    password: ${ota_password}
+
+wifi:
+  id: wifi_component
+  networks:
+    - id: wifi_default
+      ssid: ${wifi_ssid}
+      password: ${wifi_password}
+...

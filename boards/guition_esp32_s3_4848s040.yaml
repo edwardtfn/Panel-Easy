@@ -1,0 +1,81 @@
+#####################################################################################################
+#####                   Panel Easy - https://github.com/edwardtfn/Panel-Easy                    #####
+#####################################################################################################
+##### BOARD - Guition ESP32-S3-4848S040 (480x480, ST7701S RGB, GT911 touch)                     #####
+##### PLEASE only make changes if it is necessary and also the required knowledge is available. #####
+##### For normal use with the Blueprint, no changes are necessary.                              #####
+#####################################################################################################
+---
+substitutions:
+  ##############################
+  ## Change only in your      ##
+  ## local yaml substitutions ##
+  ##############################
+  board_name: Guition ESP32-S3-4848S040
+
+esp32:
+  variant: esp32s3
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+spi:
+  - id: display_spi  # 3-wire SPI used only for the ST7701S init sequence
+    clk_pin: GPIO48
+    mosi_pin: GPIO47
+
+i2c:
+  - id: touchscreen_i2c
+    sda: GPIO19
+    scl:
+      number: GPIO45
+      ignore_strapping_warning: true
+
+display:
+  - id: panel_display
+    platform: mipi_rgb
+    model: GUITION-4848S040  # Pins and init sequence provided by the ESPHome model preset
+    spi_id: display_spi
+    transform:  # The preset mirrors both axes, which renders upside down on this board
+      mirror_x: false
+      mirror_y: false
+    update_interval: never  # Refresh is driven by LVGL
+    auto_clear_enabled: false
+
+touchscreen:
+  - id: panel_touchscreen
+    platform: gt911
+    i2c_id: touchscreen_i2c
+    display: panel_display
+
+output:
+  - id: display_backlight_output
+    platform: ledc
+    pin: GPIO38
+    frequency: 150Hz
+    min_power: 0.01
+    zero_means_zero: true
+
+light:
+  - id: display_backlight
+    name: Display backlight
+    platform: monochromatic
+    output: display_backlight_output
+    restore_mode: ALWAYS_ON
+    default_transition_length: 1s
+
+ota:
+  - id: !extend ota_std
+    on_begin:
+      then:
+        # Prevents screen flickering during OTA (RGB panel shares PSRAM bandwidth with the update)
+        - light.turn_off:
+            id: display_backlight
+            transition_length: 0s
+        - lambda: |-
+            id(display_backlight).loop();
+...
