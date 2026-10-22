@@ -40,6 +40,9 @@ display:
     platform: mipi_rgb
     model: GUITION-4848S040  # Pins and init sequence provided by the ESPHome model preset
     spi_id: display_spi
+    transform:  # The preset mirrors both axes, which renders upside down on this board
+      mirror_x: false
+      mirror_y: false
     update_interval: never  # Refresh is driven by LVGL
     auto_clear_enabled: false
 
